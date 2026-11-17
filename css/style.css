@@ -9,6 +9,8 @@
   --accent-soft: #eef5ff;
   --ok: #34c759;
   --err: #ff3b30;
+  --brand: #0b2a5b;
+  --privacy: #d70015;
   color-scheme: light;
 }
 
@@ -41,6 +43,8 @@ body {
   letter-spacing: 0.02em;
   text-align: center;
 }
+
+.title .brand { color: var(--brand); }
 
 .card {
   width: 100%;
@@ -139,7 +143,7 @@ body {
   gap: 6px;
   margin: 20px 0 0;
   font-size: 13px;
-  color: var(--muted);
+  color: var(--privacy);
 }
 
 .privacy svg { width: 14px; height: 14px; flex: none; }
