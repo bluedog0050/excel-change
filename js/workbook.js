@@ -29,7 +29,23 @@
   var WIDTHS = [14.5, 17.1719, 17.3516, 15.5, 40.6719, 6.35156, 7.0, 36.0, 9.85156];
   var V_ALIGN = ['middle', 'middle', 'bottom', 'middle', 'bottom', 'middle', 'middle', 'bottom', 'middle'];
   var TEXT_COLS = [1, 2, 3, 4, 7]; // 以文字格式（@）儲存，保住電話開頭的 0
-  var FLAG_COL = { weight: 6, cod: 8 }; // 讀不到數字時標紅字（姓名、備註改用文字提醒）
+  var FLAG_COL = { weight: 6, cod: 8 }; // 讀不到數字時整格標紅字
+  var HINTS = ['（建議檢查）', '（建議刪除）']; // 姓名、備註後面的提醒文字以紅字顯示
+
+  /** 'XXX（建議刪除）' → 前段黑字、提醒文字紅字的 rich text；其他值原樣回傳 */
+  function withRedHint(v) {
+    if (typeof v !== 'string') return v;
+    for (var i = 0; i < HINTS.length; i++) {
+      var hint = HINTS[i];
+      if (v.length > hint.length && v.slice(-hint.length) === hint) {
+        return { richText: [
+          { text: v.slice(0, -hint.length), font: FONT },
+          { text: hint, font: RED_FONT }
+        ] };
+      }
+    }
+    return v;
+  }
 
   var HEADER_HEIGHT = 48.4;
   var ROW_HEIGHT = 17;
@@ -82,7 +98,7 @@
 
       item.values.forEach(function (v, i) {
         var cell = row.getCell(i + 1);
-        if (v !== null && v !== undefined) cell.value = v;
+        if (v !== null && v !== undefined) cell.value = (i === 1 || i === 7) ? withRedHint(v) : v;
         cell.font = red[i] ? RED_FONT : FONT;
         cell.border = BORDER;
         cell.alignment = i === 7

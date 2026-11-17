@@ -59,19 +59,27 @@ test('標題列說明文字為紅字，與範本相同', async () => {
   assert.equal(ws.getRow(1).getCell(4).value, '電話二');
 });
 
-test('姓名、備註以黑字加提醒文字；只有讀不到的重量、金額標紅字', async () => {
+test('姓名、備註的提醒文字為紅字；讀不到的重量、金額整格紅字', async () => {
   const ws = await roundTrip('xlsx');
   const red = (cell) => cell.font?.color?.argb === 'FFFF0000';
   const rowByPhone = {};
   ws.eachRow((row, n) => { if (n > 1) rowByPhone[row.getCell(3).value] = row; });
 
+  // 前段黑字、提醒文字紅字
+  const runs = (cell) => cell.value.richText.map((r) => [r.text, r.font?.color?.argb === 'FFFF0000']);
+
   const named = rowByPhone['0955555555'];
-  assert.equal(named.getCell(2).value, '小明2（建議檢查）');
+  assert.equal(named.getCell(2).text, '小明2（建議檢查）');
+  assert.deepEqual(runs(named.getCell(2)), [['小明2', false], ['（建議檢查）', true]]);
   assert.equal(red(named.getCell(2)), false);
 
   const gift = rowByPhone['0966666666'];
-  assert.equal(gift.getCell(8).value, '贈送測試商品*2（建議刪除）');
-  assert.equal(red(gift.getCell(8)), false);
+  assert.equal(gift.getCell(8).text, '贈送測試商品*2（建議刪除）');
+  assert.deepEqual(runs(gift.getCell(8)), [['贈送測試商品*2', false], ['（建議刪除）', true]]);
+
+  // 沒有提醒的姓名、備註維持一般文字
+  assert.equal(rowByPhone['0922222222'].getCell(2).value, '陳美麗');
+  assert.equal(rowByPhone['0955555555'].getCell(8).value, '週一至週五區間送達');
 
   assert.equal(red(rowByPhone['0923456789'].getCell(7)), true);  // 數量讀不到
   assert.equal(red(rowByPhone['0923456789'].getCell(9)), true);  // 金額讀不到
