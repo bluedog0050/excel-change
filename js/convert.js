@@ -19,6 +19,8 @@
   var STOP_MARKER = '郵局'; // A 欄出現此字樣，該列以下全部排除
   var DELIVERY_WORDS = /送達|送到|配送|寄送|送貨/g; // 不算贈品的「送」
   var HEAVY_QTY = 100; // 商品總數 ≥ 100 → 重量 20
+  var NAME_HINT = '（建議檢查）';
+  var NOTE_HINT = '（建議刪除）';
 
   function isBlank(v) {
     return v === null || v === undefined || String(v).trim() === '';
@@ -102,6 +104,8 @@
   /**
    * rows: 二維陣列（第一個工作表，含標題列）
    * 回傳 { rows: [{ values: [9 欄], flags: {name, weight, note, cod} }], excludedPostal }
+   * 姓名、備註需提醒時，在文字後面加上「（建議檢查）」「（建議刪除）」；
+   * 重量、代收貨款讀不到時由輸出端標紅字。
    */
   function convert(rows) {
     var header = findHeader(rows || []);
@@ -152,13 +156,13 @@
       out.push({
         values: [
           null,                                   // 訂單號碼
-          name.value,                             // 收貨人姓名
+          name.flag ? name.value + NAME_HINT : name.value, // 收貨人姓名
           cleanPhone(row[col.phone]),             // 收貨人電話
           null,                                   // 電話二
           isBlank(row[col.address]) ? null : String(row[col.address]).trim(), // 收貨人地址
           1,                                      // 件數
           weight,                                 // 重量
-          note.value,                             // 託運備註
+          note.flag ? note.value + NOTE_HINT : note.value, // 託運備註
           cod                                     // 代收貨款
         ],
         flags: { name: name.flag, weight: qty === null, note: note.flag, cod: codFlag }

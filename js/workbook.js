@@ -11,21 +11,25 @@
   var THIN = { style: 'thin', color: { argb: 'FF000000' } };
   var BORDER = { top: THIN, left: THIN, bottom: THIN, right: THIN };
 
-  var HEADERS = [
-    '訂單號碼\n長度限制: 20碼\n請勿使用中文',
-    '收貨人姓名(必填)\n長度限制: 20碼',
-    '收貨人電話(必填)\n長度限制: 15碼',
-    '電話二',
-    '收貨人地址(必填)\n中文限制: 50字',
-    '件數\n<100',
-    '重量\n10 / 20',
-    '託運備註\n中文限制: 50字',
-    '代收貨款\n限數字'
+  // 標題列：與範本相同，說明文字（必填、長度限制等）為紅字。每段為 [文字, 是否紅字]
+  var HEADER_RUNS = [
+    [['訂單號碼\n'], ['長度限制: 20碼\n'], ['請勿使用中文', true]],
+    [['收貨人姓名'], ['(必填)', true], ['\n'], ['長度限制: 20碼', true]],
+    [['收貨人電話'], ['(必填)', true], ['\n'], ['長度限制: 15碼', true]],
+    [['電話二']],
+    [['收貨人地址'], ['(必填)', true], ['\n'], ['中文限制: 50字', true]],
+    [['件數\n'], ['<100', true]],
+    [['重量\n'], ['10 / 20', true]],
+    [['託運備註\n'], ['中文限制: 50字', true]],
+    [['代收貨款\n'], ['限數字', true]]
   ];
+  var HEADERS = HEADER_RUNS.map(function (runs) {
+    return runs.map(function (r) { return r[0]; }).join('');
+  });
   var WIDTHS = [14.5, 17.1719, 17.3516, 15.5, 40.6719, 6.35156, 7.0, 36.0, 9.85156];
   var V_ALIGN = ['middle', 'middle', 'bottom', 'middle', 'bottom', 'middle', 'middle', 'bottom', 'middle'];
   var TEXT_COLS = [1, 2, 3, 4, 7]; // 以文字格式（@）儲存，保住電話開頭的 0
-  var FLAG_COL = { name: 1, weight: 6, note: 7, cod: 8 };
+  var FLAG_COL = { weight: 6, cod: 8 }; // 讀不到數字時標紅字（姓名、備註改用文字提醒）
 
   var HEADER_HEIGHT = 48.4;
   var ROW_HEIGHT = 17;
@@ -58,9 +62,11 @@
     ws.columns = WIDTHS.map(function (w) { return { width: w }; });
 
     var head = ws.getRow(1);
-    HEADERS.forEach(function (text, i) {
+    HEADER_RUNS.forEach(function (runs, i) {
       var cell = head.getCell(i + 1);
-      cell.value = text;
+      cell.value = runs.length === 1 ? runs[0][0] : {
+        richText: runs.map(function (r) { return { text: r[0], font: r[1] ? RED_FONT : FONT }; })
+      };
       cell.font = FONT;
       cell.numFmt = '@';
       cell.border = BORDER;
@@ -72,7 +78,7 @@
     result.rows.forEach(function (item, r) {
       var row = ws.getRow(r + 2);
       var red = {};
-      Object.keys(item.flags).forEach(function (k) { if (item.flags[k]) red[FLAG_COL[k]] = true; });
+      Object.keys(FLAG_COL).forEach(function (k) { if (item.flags[k]) red[FLAG_COL[k]] = true; });
 
       item.values.forEach(function (v, i) {
         var cell = row.getCell(i + 1);

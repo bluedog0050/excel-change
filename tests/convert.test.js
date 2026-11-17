@@ -84,8 +84,14 @@ test('整份轉換結果', () => {
   assert.equal(by['0955555555'].values[6], 10);
   assert.equal(by['0955555555'].flags.note, false);
   assert.equal(by['0955555555'].flags.name, true);
-  // 贈品備註標紅
-  assert.equal(by['0966666666'].flags.note, true);
+  assert.equal(by['0955555555'].values[1], '小明2（建議檢查）');
+  assert.equal(by['0955555555'].values[7], '週一至週五區間送達');
+  // 姓名、贈品備註：原樣保留，後面加上提醒文字
+  assert.equal(by['0966666666'].values[1], '測試公司-B1倉庫Amy收（建議檢查）');
+  assert.equal(by['0966666666'].values[7], '贈送測試商品*2（建議刪除）');
+  assert.equal(by['0977777777'].values[1], 'IC（建議檢查）');
+  assert.equal(by['0988888888'].values[7], '因為送公司，麻煩平日送達（建議刪除）');
+  assert.equal(by['0922222222'].values[1], '陳美麗');
   // 換行原樣保留
   assert.equal(by['0977777777'].values[7], '收發室\n周一-周五 0900-1800可收貨');
   // 電話被存成數字

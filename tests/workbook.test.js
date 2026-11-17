@@ -28,7 +28,7 @@ for (const type of ['xlsx', 'biff8']) {
 
     assert.equal(ws.name, 'hungsongV1');
     assert.equal(ws.rowCount, 11); // 標題 + 10 筆
-    W.HEADERS.forEach((h, i) => assert.equal(ws.getRow(1).getCell(i + 1).value, h));
+    W.HEADERS.forEach((h, i) => assert.equal(ws.getRow(1).getCell(i + 1).text, h));
     assert.equal(ws.getRow(1).height, 48.4);
     assert.equal(ws.getColumn(5).width, 40.6719);
 
@@ -43,16 +43,36 @@ for (const type of ['xlsx', 'biff8']) {
   });
 }
 
-test('紅字標示只出現在需要檢查的儲存格', async () => {
+test('標題列說明文字為紅字，與範本相同', async () => {
+  const ws = await roundTrip('xlsx');
+  const redRuns = (col) => ws.getRow(1).getCell(col).value.richText
+    .filter((r) => r.font?.color?.argb === 'FFFF0000').map((r) => r.text);
+
+  assert.deepEqual(redRuns(1), ['請勿使用中文']);
+  assert.deepEqual(redRuns(2), ['(必填)', '長度限制: 20碼']);
+  assert.deepEqual(redRuns(3), ['(必填)', '長度限制: 15碼']);
+  assert.deepEqual(redRuns(5), ['(必填)', '中文限制: 50字']);
+  assert.deepEqual(redRuns(6), ['<100']);
+  assert.deepEqual(redRuns(7), ['10 / 20']);
+  assert.deepEqual(redRuns(8), ['中文限制: 50字']);
+  assert.deepEqual(redRuns(9), ['限數字']);
+  assert.equal(ws.getRow(1).getCell(4).value, '電話二');
+});
+
+test('姓名、備註以黑字加提醒文字；只有讀不到的重量、金額標紅字', async () => {
   const ws = await roundTrip('xlsx');
   const red = (cell) => cell.font?.color?.argb === 'FFFF0000';
   const rowByPhone = {};
   ws.eachRow((row, n) => { if (n > 1) rowByPhone[row.getCell(3).value] = row; });
 
-  assert.equal(red(rowByPhone['0955555555'].getCell(2)), true);  // 小明2
-  assert.equal(red(rowByPhone['0955555555'].getCell(8)), false); // 送達
-  assert.equal(red(rowByPhone['0966666666'].getCell(8)), true);  // 贈送
-  assert.equal(red(rowByPhone['0922222222'].getCell(2)), false);
+  const named = rowByPhone['0955555555'];
+  assert.equal(named.getCell(2).value, '小明2（建議檢查）');
+  assert.equal(red(named.getCell(2)), false);
+
+  const gift = rowByPhone['0966666666'];
+  assert.equal(gift.getCell(8).value, '贈送測試商品*2（建議刪除）');
+  assert.equal(red(gift.getCell(8)), false);
+
   assert.equal(red(rowByPhone['0923456789'].getCell(7)), true);  // 數量讀不到
   assert.equal(red(rowByPhone['0923456789'].getCell(9)), true);  // 金額讀不到
 
