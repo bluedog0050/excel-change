@@ -1,0 +1,8 @@
+# 防止真實顧客資料被誤傳到這個公開 repo
+*.xlsx
+*.xls
+*.csv
+
+node_modules/
+_site/
+.DS_Store

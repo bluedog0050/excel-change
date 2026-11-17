@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 隱私防護：禁止本頁發出任何網路連線，只允許載入本站自己的檔案 -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex">
+  <title>Excel 宅配單轉換</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23107c41'/%3E%3Cpath d='M10 9l12 14M22 9L10 23' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="page">
+    <h1 class="title">Excel 宅配單轉換</h1>
+
+    <section class="card">
+      <!-- 1. 等待檔案 -->
+      <div id="view-drop" class="view">
+        <div id="dropzone" class="dropzone" role="button" tabindex="0" aria-label="選擇或拖曳 Excel 檔案">
+          <svg class="icon" viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M24 31V11m0 0l-8 8m8-8l8 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 29v6a4 4 0 004 4h20a4 4 0 004-4v-6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <p class="drop-main">請將檔案拖曳至此處</p>
+          <p class="drop-sub">或點擊選擇檔案・支援 .xlsx / .xls</p>
+        </div>
+        <input id="file-input" type="file" hidden
+               accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
+      </div>
+
+      <!-- 2. 處理中 -->
+      <div id="view-busy" class="view" hidden>
+        <div class="spinner" aria-hidden="true"></div>
+        <p class="status" role="status">處理中…</p>
+      </div>
+
+      <!-- 3. 完成 -->
+      <div id="view-done" class="view" hidden>
+        <svg class="icon icon-ok" viewBox="0 0 48 48" aria-hidden="true">
+          <circle cx="24" cy="24" r="20" fill="currentColor"/>
+          <path d="M15 24.5l6 6 12-13" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <button id="download" class="btn btn-primary" type="button">下載已編輯的 Excel 檔</button>
+        <button class="btn btn-secondary" type="button" data-action="reset">處理下一個檔案</button>
+      </div>
+
+      <!-- 錯誤 -->
+      <div id="view-error" class="view" hidden>
+        <svg class="icon icon-err" viewBox="0 0 48 48" aria-hidden="true">
+          <circle cx="24" cy="24" r="20" fill="currentColor"/>
+          <path d="M24 14v13m0 6.5v.5" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+        <p id="error-text" class="status" role="alert"></p>
+        <button class="btn btn-secondary" type="button" data-action="reset">重新選擇檔案</button>
+      </div>
+    </section>
+
+    <p class="privacy">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 7V5a4 4 0 018 0v2h.5A1.5 1.5 0 0114 8.5v5a1.5 1.5 0 01-1.5 1.5h-9A1.5 1.5 0 012 13.5v-5A1.5 1.5 0 013.5 7H4zm2 0h4V5a2 2 0 00-4 0v2z" fill="currentColor"/></svg>
+      檔案只在你的電腦中處理，不會上傳到任何地方
+    </p>
+  </main>
+
+  <script src="vendor/xlsx.full.min.js"></script>
+  <script src="vendor/exceljs.min.js"></script>
+  <script src="js/convert.js"></script>
+  <script src="js/workbook.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
