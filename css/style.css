@@ -10,7 +10,6 @@
   --ok: #34c759;
   --err: #ff3b30;
   --brand: #2d68c4;
-  --privacy: #d70015;
   color-scheme: light;
 }
 
@@ -143,10 +142,10 @@ body {
   gap: 6px;
   margin: 20px 0 0;
   font-size: 13px;
-  color: var(--privacy);
+  color: var(--muted);
 }
 
-.privacy svg { width: 14px; height: 14px; flex: none; color: var(--muted); }
+.privacy svg { width: 14px; height: 14px; flex: none; }
 
 @media (max-width: 480px) {
   .title { font-size: 24px; }
