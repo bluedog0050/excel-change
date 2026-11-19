@@ -17,9 +17,9 @@
   };
 
   var STOP_MARKER = '郵局'; // A 欄出現此字樣，該列以下全部排除
-  var DELIVERY_WORDS = /送達|送到|配送|寄送|送貨|運送/g; // 不算贈品的「送」
+  var DELIVERY_WORDS = /送達|送到|配送|寄送|送貨|運送|派送/g; // 不算贈品的「送」
   var GIFT_WORD = '贈品'; // 備註含此字樣 → 建議刪除
-  var KEEP_NOTE = /配送|運送/; // 備註含這些字樣 → 一律不提醒（即使同時有贈品）
+  var KEEP_NOTE = /配送|運送|派送/; // 備註含這些字樣 → 一律不提醒（即使同時有贈品）
   var HEAVY_QTY = 100; // 商品總數 ≥ 100 → 重量 20
   var NAME_HINT = '（建議檢查）';
   var NOTE_HINT = '（建議刪除）';
