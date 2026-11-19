@@ -39,6 +39,16 @@ test('備註：「送」字判斷，排除配送用語', () => {
   assert.equal(C.cleanNote('請下午三點後到貨').flag, false);
 });
 
+test('備註：「贈品」建議刪除；含「配送」「運送」一律不提醒', () => {
+  assert.equal(C.cleanNote('附贈品一份').flag, true);
+  assert.equal(C.cleanNote('贈品：米果').flag, true);
+  assert.equal(C.cleanNote('請盡快運送').flag, false);
+  assert.equal(C.cleanNote('平日配送').flag, false);
+  assert.equal(C.cleanNote('贈品請一起配送').flag, false);
+  assert.equal(C.cleanNote('贈品運送時請小心').flag, false);
+  assert.equal(C.cleanNote('贈送米果，請平日配送').flag, false);
+});
+
 test('備註：原樣保留換行，空白視為沒有備註', () => {
   assert.equal(C.cleanNote('收發室\n周一-周五').value, '收發室\n周一-周五');
   assert.equal(C.cleanNote('A\r\nB').value, 'A\nB');
