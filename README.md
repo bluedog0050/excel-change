@@ -2,7 +2,7 @@
 
 把網路商店匯出的訂單 Excel（.xlsx / .xls），一鍵轉成新竹物流的宅配匯入格式。
 
-**網址：** https://dwlin321-username.github.io/excel-change/
+**網址：** https://bluedog0050.github.io/excel-change/
 
 ## 隱私
 

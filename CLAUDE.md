@@ -5,7 +5,7 @@
 ## 專案是什麼
 
 「華記蜜餞創始店 新竹物流 Excel轉換工具」：把網路商店匯出的訂單 Excel（.xlsx / .xls）轉成新竹物流宅配匯入格式的單頁網頁工具。
-網址：https://dwlin321-username.github.io/excel-change/
+網址：https://bluedog0050.github.io/excel-change/
 
 詳細轉換規則寫在 `README.md`，**修改規則時要同步更新 README 的規則表**。
 
