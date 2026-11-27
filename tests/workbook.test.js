@@ -88,3 +88,25 @@ test('姓名、備註的提醒文字為紅字；讀不到的重量、金額整�
   assert.equal(multi.getCell(8).alignment.wrapText, true);
   assert.ok(multi.height > 17);
 });
+
+test('代收貨款 ≥ 10000 整格黃色填滿，數字照常保留', async () => {
+  const row = (cod) => ({
+    values: [null, '王小明', '0912345678', null, '新竹市測試路1號', 1, 10, null, cod],
+    flags: { name: false, weight: false, note: false, cod: false }
+  });
+  const result = { rows: [row(9999), row(10000), row(25800), row(null)], excludedPostal: false };
+  const buffer = await W.buildWorkbook(ExcelJS, result).xlsx.writeBuffer();
+  const wb = new ExcelJS.Workbook();
+  await wb.xlsx.load(buffer);
+  const ws = wb.worksheets[0];
+  const yellow = (cell) => cell.fill?.type === 'pattern' && cell.fill.fgColor?.argb === 'FFFFFF00';
+
+  assert.equal(ws.getCell('I2').value, 9999);
+  assert.equal(yellow(ws.getCell('I2')), false);
+  assert.equal(ws.getCell('I3').value, 10000);
+  assert.equal(yellow(ws.getCell('I3')), true);
+  assert.equal(ws.getCell('I4').value, 25800);
+  assert.equal(yellow(ws.getCell('I4')), true);
+  assert.equal(yellow(ws.getCell('I5')), false); // 沒有代收貨款
+  assert.equal(yellow(ws.getCell('H3')), false); // 只填滿代收貨款這一格
+});

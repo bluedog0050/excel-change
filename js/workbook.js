@@ -30,6 +30,8 @@
   var V_ALIGN = ['middle', 'middle', 'bottom', 'middle', 'bottom', 'middle', 'middle', 'bottom', 'middle'];
   var TEXT_COLS = [1, 2, 3, 4, 7]; // 以文字格式（@）儲存，保住電話開頭的 0
   var FLAG_COL = { weight: 6, cod: 8 }; // 讀不到數字時整格標紅字
+  var HIGH_COD = 10000; // 代收貨款 ≥ 此金額 → 該格黃色填滿（數字照常保留）
+  var YELLOW_FILL = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFF00' } };
   var HINTS = ['（建議檢查）', '（建議刪除）']; // 姓名、備註後面的提醒文字以紅字顯示
 
   /** 'XXX（建議刪除）' → 前段黑字、提醒文字紅字的 rich text；其他值原樣回傳 */
@@ -105,6 +107,7 @@
           ? { vertical: V_ALIGN[i], wrapText: true }
           : { vertical: V_ALIGN[i] };
         if (TEXT_COLS.indexOf(i) !== -1) cell.numFmt = '@';
+        if (i === FLAG_COL.cod && typeof v === 'number' && v >= HIGH_COD) cell.fill = YELLOW_FILL;
       });
 
       row.height = Math.max(ROW_HEIGHT, noteLines(item.values[7]) * LINE_HEIGHT + 0.5);
